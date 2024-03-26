@@ -317,6 +317,24 @@ If the mod isn't loading or isn't working, you may have made an error somewhere.
 - Not returning your `ITMPlugin` implementation.
 - Not setting your `game` field in `InitializeGame`.
 
+## Attaching the Visual Studio Debugger
+
+When developing mods, sometimes you'll run into unexpected issues. Occasionally, these can be extremely difficult to identify without proper debugging tools. This section will explain how to attach the Visual Studio debugger to Total Miner, so you can use breakpoints and `Debug` methods while developing your mod.
+
+In Visual Studio, while Total Miner is running, click "Debug" -> "Attach To Process."
+
+![Attach To Process](Images/AttachToProcess1.png)
+
+This will open another window. Here, you can select a process to attach the debugger to. Search for "TotalMiner," select it, and click "Attach"
+
+![Attach To Process](Images/AttachToProcess2.png)
+
+Now, you can use Visual Studio's debugging features to debug your mod. Keep in mind that you'll have to stop debugging to rebuild the mod. When you want to reattach the debugger, you can click "Debug" -> "Reattach To Process" instead, or press `Shift + Alt + P`.
+
+## Adding More Features
+
+Now we have a basic C# mod loaded and working in-game. From here, you can add any functionality you like. More guides for Total Miner-specific features will be added overtime.
+
 Below is the full code of the mod at this stage:
 
 `TutorialPluginProvider.cs`:

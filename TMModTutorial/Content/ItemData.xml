@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfModItemDataXML>
+  <ModItemDataXML>
+    <ItemID>MyStaff</ItemID>
+    <Name>My Staff</Name>
+    <Desc>An example staff item.</Desc>
+    <MinCSPrice>1000</MinCSPrice>
+    <StackSize>1</StackSize>
+    <Durability>500</Durability>
+    <Plural>S</Plural>
+  </ModItemDataXML>
+</ArrayOfModItemDataXML>

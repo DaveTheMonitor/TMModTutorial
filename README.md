@@ -4,6 +4,8 @@ This guide is up to date as of Total Miner version `open_beta v2.9.7.1583 12/8/2
 
 This guide assumes you have some basic knowledge of C#. If not, you'll need to learn C# first. There are many free resources online to help you get started. If you have any questions regarding Total Miner mod development in particular, feel free to post your question in [#modding](https://discord.com/channels/259780503115137028/1082192148557987900) in the [Total Miner Discord Server](https://discord.gg/TotalMiner)!
 
+This guide is also going to focus on the C# side of mods. Some basic XML setup will be included, but for the most part this guide assumes you either already know how XML mods work (where it's needed) or aren't planning to use it.
+
 We will be using Visual Studio 2022 in this guide, but the setup for Visual Studio 2019 is mostly the same. If you have a different preferred editor, some parts of this guide may not apply the same way.
 
 ## Setting up The IDE and MonoGame
@@ -204,7 +206,7 @@ This interface has several methods we can implement:
 
 Make sure to return a new instance of this plugin in your plugin provider's `GetPlugin` implementation, otherwise your mod won't do anything!
 
-```
+```cs
 public sealed class TutorialPluginProvider : ITMPluginProvider
 {
     public ITMPlugin GetPlugin() => new TutorialPlugin();
@@ -243,6 +245,8 @@ public sealed class TutorialPlugin : ITMPlugin
 
 ![Suppress CA1416](Images/SuppressCA1416.png)
 
+Open the file it creates, and change the scope from `Scope = "member"` to `Scope = "module"`, and delete `Target = "*"` to suppress the warning for the entire project.
+
 Now, we can build our mod. Click "Build" -> "Build Solution." Alternatively, you can press `Ctrl + Shift + B` to start the build. Once it's finished, the output window should show "1 succeeded." If it shows an error, make sure everything is set up correctly. Some common errors include:
 - The mod references the `StudioForge.TotalMiner.dll` file instead of `StudioForge.TotalMiner.API.dll`. Make sure the file with `API` in the name is included.
 - The project has an incorrect framework version (see [Creating The Mod Project](#creating-the-mod-project) step 2.)
@@ -253,13 +257,15 @@ If it's not one of those, make sure there are no errors in your code.
 
 ![Build Output](Images/BuildOutput.png)
 
-**NOTE:** There may be some build errors about the build configuration. If there are, change the target architecture to x64 using the Build Manager, as that's what Total Miner runs on.
+**NOTE:** There may be some build warnings about the build configuration. If there are, change the target architecture to x64 using the Configuration Manager, as that's what Total Miner targets.
 
-Open the build output folder. Right-click the project -> "Open Folder in File Explorer," and go to `bin/Debug/net7.0` to find your built project. In this folder should be a file with the named `{ProjectName}.dll`. Copy that to your mod folder. If you already have a folder for your mod, you can skip the steps below.
+Open the build output folder. Right-click the project -> "Open Folder in File Explorer," and go to `bin/Debug/net7.0` to find your built project. In this folder should be a file with the named `{ProjectName}.dll`. Copy that to your mod folder.
 
 **NOTE:** The references you added previously will be here as well. **Do not** copy those, only copy your main mod DLL file.
 
-### Optional: Create a Mod Folder
+### Create a Mod Folder
+
+If you already have a folder for your mod, you can skip this section.
 
 If you don't already have a folder for your mod, go to your Total Miner's save folder (by default, `Documents/My Games/TotalMiner`), and open `Mods`. Create a new folder here with the name of your mod.
 
@@ -298,7 +304,7 @@ Mod Folder
 
 ### Enabling The Mod
 
-Start Total Miner, and create a new world. In the mod menu, you should see your newly created mod. Simple click it to enable it, then load the world.
+Start Total Miner, and create a new world. In the mod menu, you should see your newly created mod. Simply click it to enable it, then load the world.
 
 ![Enable Mod](Images/EnableMod.png)
 
@@ -443,3 +449,9 @@ namespace TMModTutorial
     }
 }
 ```
+
+Here are some topics you can look into next. Of course, not all mods will need to use all of these featues, so feel free to look into anything your specific mod needs.
+
+## [Custom Items](./CustomItems.md)
+
+Access your XML-defined items with C# and add events that will be executed when the item is swung.

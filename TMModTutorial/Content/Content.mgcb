@@ -13,3 +13,24 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ItemData.xml
+/copy:ItemData.xml
+
+#begin ItemTextures16.xml
+/copy:ItemTextures16.xml
+
+#begin ItemTextures32.xml
+/copy:ItemTextures32.xml
+
+#begin ItemTypeData.xml
+/copy:ItemTypeData.xml
+
+#begin ModInfo.xml
+/copy:ModInfo.xml
+
+#begin TPI_16.png
+/copy:TPI_16.png
+
+#begin TPI_32.png
+/copy:TPI_32.png
+

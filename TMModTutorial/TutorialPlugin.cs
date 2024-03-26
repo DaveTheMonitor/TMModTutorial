@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StudioForge.BlockWorld;
+using StudioForge.TotalMiner;
 using StudioForge.TotalMiner.API;
+using StudioForge.TotalMiner.Graphics;
 using System;
 
 namespace TMModTutorial
@@ -13,6 +16,8 @@ namespace TMModTutorial
         {
             // Called once, when the mod is loaded.
             // Load any assets your mods needs (eg. textures) here.
+
+            TutorialItems.Initialize(mgr.Offsets);
         }
 
         public void InitializeGame(ITMGame game)
@@ -20,7 +25,14 @@ namespace TMModTutorial
             // Called once after all mods are initialized.
             // Add events to the game here (eg. item swing events)
             // and set a game field to use later.
+
             _game = game;
+
+            // This method takes an action. Methods can be implicitly cast
+            // to delegates (an action is a delegate without a return value)
+            // with the same parameters and return value.
+            // MySwingEvent is method we're using for the event.
+            game.AddEventItemSwing(TutorialItems.MyStaff, MySwingEvent);
         }
 
         public void UnloadMod()
@@ -80,7 +92,6 @@ namespace TMModTutorial
             // Called every frame.
             // Implement any player-independent logic that needs to run every
             // frame here.
-            _game.AddNotification("It's working!");
         }
 
         public void Update(ITMPlayer player)
@@ -88,6 +99,62 @@ namespace TMModTutorial
             // Called for each player every frame.
             // Implement any player-dependent logic that needs to run every
             // frame here.
+        }
+
+        private void MySwingEvent(Item item, ITMHand hand)
+        {
+            if (hand.Owner is not ITMPlayer player)
+            {
+                // ActorInReticle is not available on ITMActor.
+                // If you want the item to work for NPCs, you'll
+                // have to implement the raycast logic yourself,
+                // which is out of the scope of this tutorial.
+                return;
+            }
+
+            ITMActor target = player.ActorInReticle;
+            if (target == null)
+            {
+                // We return if the target is null, meaning
+                // the player isn't targeting anything.
+                return;
+            }
+
+            // We test the distance between the player and the target,
+            // and return if it's greater than the specified distance.
+            // This prevents us from damaging NPCs from across the map.
+            float distance = 10;
+            if (Vector3.Distance(player.Position, target.Position) > distance)
+            {
+                return;
+            }
+
+            // If all of those checks passed, we must have a valid target.
+            // Now we can deal damage and spawn our particles.
+
+            // To deal damage, we'll use the TakeDamageAndDisplay method,
+            // passing the player as the attacker.
+            target.TakeDamageAndDisplay(DamageType.Combat, 20, Vector3.Zero, player, TutorialItems.MyStaff, SkillType.Attack);
+
+            // To spawn particles, we'll use the ITMWorld.AddParticle
+            // method, and pass the position of the target + (0, 1, 0)
+
+            // This is the data for the particles we want to spawn.
+            ParticleData particle = new ParticleData()
+            {
+                Size = new Vector4(0.15f, 0.15f, 0.15f, 0),
+                // Duration is measured in milliseconds, not seconds
+                Duration = 1200,
+                StartColor = Color.LightGreen,
+                EndColor = Color.Transparent,
+                VelocityVariance = new Vector3(5, 5, 5)
+            };
+
+            // We use a loop here to spawn multiple particles.
+            for (int i = 0; i < 10; i++)
+            {
+                _game.World.AddParticle(target.Position + new Vector3(0, 1, 0), ref particle);
+            }
         }
     }
 }

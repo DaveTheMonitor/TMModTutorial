@@ -1,5 +1,8 @@
 # Custom Items & C#
 
+## Prerequisites:
+- [Basic Setup](./README.md)
+
 Custom items are added with XML, but you can use C# to add additional functionality, such as a swing event. However, accessing your custom items with C# isn't as simple as just using the ID. This guide will explain how to access your custom items with C#, and add swing events to them.
 
 ## Adding Custom Items

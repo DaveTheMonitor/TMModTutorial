@@ -1,5 +1,8 @@
 # Handling Input
 
+## Prerequisites:
+- [Basic Setup](./README.md)
+
 In your mod, you may want to react to user input. For example, you might want to perform an action when the player presses a button. To do that, we can use the `HandleInput` method.
 
 ## HandleInput

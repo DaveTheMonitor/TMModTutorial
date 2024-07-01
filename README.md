@@ -477,3 +477,7 @@ Access your XML-defined items with C# and add events that will be executed when 
 ## [Handling Input](./HandlingInput.md)
 
 Perform actions when the player presses a key or button.
+
+## [Saving Data](./SavingData.md)
+
+Save custom data for the world that shouldn't reset when the world is reloaded.

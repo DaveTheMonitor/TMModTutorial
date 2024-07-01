@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StudioForge.BlockWorld;
+using StudioForge.Engine.Core;
 using StudioForge.TotalMiner;
 using StudioForge.TotalMiner.API;
 using StudioForge.TotalMiner.Graphics;
@@ -84,7 +86,37 @@ namespace TMModTutorial
             // React to user input here.
             // This method should return true if it does something in response
             // to user input, otherwise false.
+
+            // We launch the player into the air when they're on the ground
+            // and press R on keyboard, or DPad Down + A on controller.
+            if (player.IsOnGround)
+            {
+                // Keyboard input
+                if (InputManager.IsKeyPressed(player.PlayerIndex, Keys.R))
+                {
+                    LaunchPlayer(player);
+                    return true;
+                }
+                // Controller input
+                else if (InputManager.IsButtonPressed(player.PlayerIndex, Buttons.DPadDown)
+                    && InputManager.IsButtonPressed(player.PlayerIndex, Buttons.A))
+                {
+                    LaunchPlayer(player);
+                    return true;
+                }
+            }
+
             return false;
+        }
+
+        private void LaunchPlayer(ITMPlayer player)
+        {
+            // Be careful with high velocities - this number is the number
+            // of blocks the player moves every frame, not every second!
+            // Because Total Miner is locked to 60 FPS, By dividing our
+            // target blocks per second by 60, we get the correct value.
+            // 20f / 60f gives a velocity of 20 blocks/s.
+            player.Velocity = new Vector3(player.Velocity.X, 20f / 60f, player.Velocity.Z);
         }
 
         public void Update()

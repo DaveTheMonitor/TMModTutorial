@@ -473,3 +473,7 @@ Here are some topics you can look into next. Of course, not all mods will need t
 ## [Custom Items](./CustomItems.md)
 
 Access your XML-defined items with C# and add events that will be executed when the item is swung.
+
+## [Handling Input](./HandlingInput.md)
+
+Perform actions when the player presses a key or button.

@@ -61,11 +61,16 @@ These are texture atlases, meaning all item textures from your mod will be inclu
 
 It is recommended to expand the atlas horizontally until you reach 32 items, (512 pixels for 16x, 1024 pixels for 32x), then expand vertically.
 
+Because we only have one item right now, we can just use that item's texture. However, when we want to add more than one item, we'll have to add more items to the atlas.
+
+![32x Staff Texture](Images/Staff32.png)
+![16x Staff Texture](Images/Staff16.png)
+
 ## How do Item IDs work?
 
 Total Miner uses numeric IDs for items. The first 256 items are blocks. You don't have to memorize these IDs, as you an access them through the `Item` enum:
 
-```cs
+```csharp
 public sealed class TutorialPlugin : ITMPlugin
 {
     public void PlayerJoined(ITMPlayer player)
@@ -111,7 +116,7 @@ Relative to your mod's type offsets, `MySword` has the ID `0`, `MyPickaxe` has t
 
 To easily access these ID's we'll make a new static class. You can name this class whatever you want, but I would suggest `{ModName}Items`. This class will contain static properties/fields for your item IDs, and a method to initialize the IDs that takes `EnumTypeOffsets`.
 
-```cs
+```csharp
 public static class TutorialItems
 {
     public static Item MyStaff { get; private set; }
@@ -125,7 +130,7 @@ public static class TutorialItems
 
 In the `Initialize` method, we'll set the properties. Unfortunately, without much more complicated and slower methods, this part has to be done manually. Set each property to `offsets.ItemID + {index}`, where `{index}` is the index of the item in your XML data. The resulting numeric ID can be casted to `Item` without worry.
 
-```cs
+```csharp
 public static void Initialize(EnumTypeOffsets offsets)
 {
     // the first item is offsets.ItemID + 0, so we don't have to add anything.
@@ -138,7 +143,7 @@ public static void Initialize(EnumTypeOffsets offsets)
 
 Finally, don't forget to call this method in your plugin's `Initialize` method, otherwise we won't be able to use our items:
 
-```cs
+```csharp
 public sealed class TutorialPlugin : ITMPlugin
 {
     public void Initialize(ITMPluginManager mgr, ITMMod mod)
@@ -150,7 +155,7 @@ public sealed class TutorialPlugin : ITMPlugin
 
 Now we can use our custom items wherever we want! We can use the code from before but change `Item.SteelSword` to `TutorialItems.MyStaff` to add our custom item to the player's inventory.
 
-```cs
+```csharp
 public sealed class TutorialPlugin : ITMPlugin
 {
     public void PlayerJoined(ITMPlayer player)
@@ -166,7 +171,7 @@ public sealed class TutorialPlugin : ITMPlugin
 
 We can add custom swing events with `ITMGame.AddEventItemSwing`. This method takes the ID of the item we want to add the event to, and an action for the event. The action is passed the item ID - which we won't need if our event is only used for one item - and the hand holding the item, which we can use to get the actor holding the item. We'll call this method in `InitializeGame`:
 
-```cs
+```csharp
 public void InitializeGame(ITMGame game)
 {
     _game = game;
@@ -195,7 +200,7 @@ If you did everything right, swinging your custom item should now display a noti
 
 You do anything you want in this event, but for this example we'll just make the staff damage the target and spawn some particles:
 
-```cs
+```csharp
 private void MySwingEvent(Item item, ITMHand hand)
 {
     if (hand.Owner is not ITMPlayer player)
@@ -254,3 +259,156 @@ private void MySwingEvent(Item item, ITMHand hand)
 ```
 
 ![Staff Swing](Images/StaffSwing.png)
+
+You might notice that if you attack an enemy with this staff when they can't see you, they won't target you. This is because we're just dealing damage to them, not telling them that they're being attacked. To have them target the player when attacked, add this to the swing event immediately after `TakeDamageAndDisplay`:
+
+```csharp
+TargetingSystem.Target((IActorBehaviour)player, (IActorBehaviour)target);
+```
+
+This tells the NPC that the player is targeting the NPC that we dealt damage to. This causes the NPC we attack to target the player, as they will now recognize that they're being attacked. Note that we must cast both the NPC and the player to `IActorBehaviour` to call this method.
+
+```csharp
+private void MySwingEvent(Item item, ITMHand hand)
+{
+    // ...
+
+    // To deal damage, we'll use the TakeDamageAndDisplay method,
+    // passing the player as the attacker.
+    target.TakeDamageAndDisplay(DamageType.Combat, 20, Vector3.Zero, player, TutorialItems.MyStaff, SkillType.Attack);
+
+    // This ensures that the NPC will target the attacker, even if
+    // they can't see them.
+    TargetingSystem.Target((IActorBehaviour)player, (IActorBehaviour)target);
+
+    // ...
+}
+```
+
+These are the relevant changes we've made to get our custom item working:
+
+`TutorialItems.cs`:
+```csharp
+using StudioForge.TotalMiner.API;
+using StudioForge.TotalMiner;
+
+namespace TMModTutorial
+{
+    public static class TutorialItems
+    {
+        public static Item MyStaff { get; private set; }
+
+        public static void Initialize(EnumTypeOffsets offsets)
+        {
+            // the first item is offsets.ItemID + 0, so we don't have to add anything.
+            MyStaff = (Item)offsets.ItemID;
+
+            // For other items, set them to (Item)offsets.ItemID + index
+            // eg. MySword = (Item)offsets.ItemID + 1;
+        }
+    }
+}
+```
+
+`TutorialPlugin.cs`:
+
+```csharp
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StudioForge.BlockWorld;
+using StudioForge.TotalMiner;
+using StudioForge.TotalMiner.API;
+using StudioForge.TotalMiner.Graphics;
+using System;
+
+namespace TMModTutorial
+{
+    public sealed class TutorialPlugin : ITMPlugin
+    {
+        private ITMGame _game;
+
+        public void Initialize(ITMPluginManager mgr, ITMMod mod)
+        {
+            // Called once, when the mod is loaded.
+            // Load any assets your mods needs (eg. textures) here.
+
+            TutorialItems.Initialize(mgr.Offsets);
+        }
+
+        public void InitializeGame(ITMGame game)
+        {
+            // Called once after all mods are initialized.
+            // Add events to the game here (eg. item swing events)
+            // and set a game field to use later.
+
+            _game = game;
+
+            // This method takes an action. Methods can be implicitly cast
+            // to delegates (an action is a delegate without a return value)
+            // with the same parameters and return value.
+            // MySwingEvent is method we're using for the event.
+            game.AddEventItemSwing(TutorialItems.MyStaff, MySwingEvent);
+        }
+
+        private void MySwingEvent(Item item, ITMHand hand)
+        {
+            if (hand.Owner is not ITMPlayer player)
+            {
+                // ActorInReticle is not available on ITMActor.
+                // If you want the item to work for NPCs, you'll
+                // have to implement the raycast logic yourself,
+                // which is out of the scope of this tutorial.
+                return;
+            }
+
+            ITMActor target = player.ActorInReticle;
+            if (target == null)
+            {
+                // We return if the target is null, meaning
+                // the player isn't targeting anything.
+                return;
+            }
+
+            // We test the distance between the player and the target,
+            // and return if it's greater than the specified distance.
+            // This prevents us from damaging NPCs from across the map.
+            float distance = 10;
+            if (Vector3.Distance(player.Position, target.Position) > distance)
+            {
+                return;
+            }
+
+            // If all of those checks passed, we must have a valid target.
+            // Now we can deal damage and spawn our particles.
+
+            // To deal damage, we'll use the TakeDamageAndDisplay method,
+            // passing the player as the attacker.
+            target.TakeDamageAndDisplay(DamageType.Combat, 20, Vector3.Zero, player, TutorialItems.MyStaff, SkillType.Attack);
+
+            // This ensures that the NPC will target the attacker, even if
+            // they can't see them.
+            TargetingSystem.Target((IActorBehaviour)player, (IActorBehaviour)target);
+
+            // To spawn particles, we'll use the ITMWorld.AddParticle
+            // method, and pass the position of the target + (0, 1, 0)
+
+            // This is the data for the particles we want to spawn.
+            ParticleData particle = new ParticleData()
+            {
+                Size = new Vector4(0.15f, 0.15f, 0.15f, 0),
+                // Duration is measured in milliseconds, not seconds
+                Duration = 1200,
+                StartColor = Color.LightGreen,
+                EndColor = Color.Transparent,
+                VelocityVariance = new Vector3(5, 5, 5)
+            };
+
+            // We use a loop here to spawn multiple particles.
+            for (int i = 0; i < 10; i++)
+            {
+                _game.World.AddParticle(target.Position + new Vector3(0, 1, 0), ref particle);
+            }
+        }
+    }
+}
+```

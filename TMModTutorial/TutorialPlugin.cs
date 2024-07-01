@@ -136,6 +136,10 @@ namespace TMModTutorial
             // passing the player as the attacker.
             target.TakeDamageAndDisplay(DamageType.Combat, 20, Vector3.Zero, player, TutorialItems.MyStaff, SkillType.Attack);
 
+            // This ensures that the NPC will target the attacker, even if
+            // they can't see them.
+            TargetingSystem.Target((IActorBehaviour)player, (IActorBehaviour)target);
+
             // To spawn particles, we'll use the ITMWorld.AddParticle
             // method, and pass the position of the target + (0, 1, 0)
 

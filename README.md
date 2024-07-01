@@ -1,6 +1,6 @@
 # Creating a Total Miner Mod
 
-This guide is up to date as of Total Miner version `open_beta v2.9.7.1583 12/8/2023`. Some steps may change in the future, but the process should generally be mostly the same.
+This guide is up to date as of Total Miner version `public v2.10.8.1687 5/30/2024`. Some steps may change in the future, but the process should generally be mostly the same.
 
 This guide assumes you have some basic knowledge of C#. If not, you'll need to learn C# first. There are many free resources online to help you get started. If you have any questions regarding Total Miner mod development in particular, feel free to post your question in [#modding](https://discord.com/channels/259780503115137028/1082192148557987900) in the [Total Miner Discord Server](https://discord.gg/TotalMiner)!
 
@@ -12,9 +12,9 @@ We will be using Visual Studio 2022 in this guide, but the setup for Visual Stud
 
 If you don't have an IDE already, download [Visual Studio 2022](https://visualstudio.microsoft.com/). The free version (Community Edition) is more than enough for mod development.
 
-**NOTE:** Visual Studio and Visual Studio Code are not the same thing. Visual Studio Code is a general code editor. For mod development, we want Visual Studio, which is a ful IDE (integrated development environment).
+**NOTE:** Visual Studio and Visual Studio Code are not the same thing. Visual Studio Code is a general code editor. For mod development, we want Visual Studio, which is a full IDE (integrated development environment).
 
-Next, you'll need the MonoGame project templates to create your project. You can read how to install those [here](https://monogame.net/articles/getting_started/1_setting_up_your_development_environment_windows.html#install-monogame-extension-for-visual-studio-2022)
+Next, you'll need the MonoGame project templates to create your project. You can read how to install those [here](https://docs.monogame.net/articles/getting_started/1_setting_up_your_development_environment_windows.html#install-monogame-extension-for-visual-studio-2022)
 
 ## Creating the Mod Project
 
@@ -30,7 +30,7 @@ Next, you'll need the MonoGame project templates to create your project. You can
 
     ![Browse Local Files](Images/BrowseLocalFiles.png)
 
-**NOTE:** Make sure you're opted in to the beta. If you aren't, select "Properties" -> "Betas" and select "beta_open" in the dropdown. The game will require an update, and then you'll be on the most recent version.
+    **NOTE:** You do **not** need to be in the beta for this guide to work. If any guides require the beta version, they will state so.
 
 4. In the game folder, you'll find several `.dll` files. Copy the files listed below to the folder you created in your project. Some files will also have an associated XML file, copy that too. It contains documentation.
     - `StudioForge.TotalMiner.API.dll`: The primary Total Miner API.
@@ -58,7 +58,7 @@ Total Miner loads plugins by finding an implementation of the `ITMPluginProvider
 
 *Don't forget to add `using StudioForge.TotalMiner.API` at the top of the file to use the interface!*
 
-```cs
+```csharp
 using StudioForge.TotalMiner.API;
 
 namespace TMModTutorial
@@ -95,7 +95,7 @@ This guide will cover `ITMPlugin`, `ITMPluginArcade`, `ITMPluginBlocks`, and `IT
 
 Your `ITMPlugin` implementation will be used for basic functionality, such as running code on every game update, handling user input, drawing textures/geometry, and adding new Lua functions (shown later).
 
-```cs
+```csharp
 using Microsoft.Xna.Framework.Graphics;
 using StudioForge.BlockWorld;
 using StudioForge.TotalMiner.API;
@@ -195,7 +195,7 @@ This interface has several methods we can implement:
 - `RegisterLuaFunctions`: Called when registering Lua functions to a script instance. Return an array containing an instance of your Lua functions class or an empty array (if you don't add any Lua functions) here.
 - `PlayerJoined`: Called when a player joins the game.
 - `PlayerLeft`: Called when a player leaves the game.
-- `WorldSaved`: Called when the world is saved. Use ITMGame.World.WorldPath to get the world path if you want to save files.
+- `WorldSaved`: Called when the world is saved. Use `ITMGame.World.WorldPath` to get the world path if you want to save files.
 - `Draw`: Called every rendered frame. Draw custom UI or geometry here.
     - Drawing custom geometry is out of the scope of this guide, just know that drawing custom geometry in Total Miner is the same as any other MonoGame project, but you'll likely have to write any effects/shaders yourself.
 - `HandleInput`: Called every frame. React to user input here. This method should return true if it does something in response to user input, otherwise false.
@@ -206,7 +206,7 @@ This interface has several methods we can implement:
 
 Make sure to return a new instance of this plugin in your plugin provider's `GetPlugin` implementation, otherwise your mod won't do anything!
 
-```cs
+```csharp
 public sealed class TutorialPluginProvider : ITMPluginProvider
 {
     public ITMPlugin GetPlugin() => new TutorialPlugin();
@@ -215,7 +215,7 @@ public sealed class TutorialPluginProvider : ITMPluginProvider
 
 To make sure we set everything up properly, we'll display a notification in the `Update` method. First, we'll have to keep a field for the main `ITMGame` object so we can call methods on it. We can set this field in `InitializeGame`:
 
-```cs
+```csharp
 public sealed class TutorialPlugin : ITMPlugin
 {
     private ITMGame _game;
@@ -229,7 +229,7 @@ public sealed class TutorialPlugin : ITMPlugin
 
 Now, we can call `ITMGame.AddNotification` in `Update`:
 
-```cs
+```csharp
 public sealed class TutorialPlugin : ITMPlugin
 {
     private ITMGame _game;
@@ -257,7 +257,7 @@ If it's not one of those, make sure there are no errors in your code.
 
 ![Build Output](Images/BuildOutput.png)
 
-**NOTE:** There may be some build warnings about the build configuration. If there are, change the target architecture to x64 using the Configuration Manager, as that's what Total Miner targets.
+**NOTE:** There may be some build warnings about the build configuration. If there are, you can remove them by change the target architecture to x64 using the Configuration Manager, as that's what Total Miner targets. Doing so will change the output directory from `bin/Debug/net7-0` to `bin/x64/Debug/net7-0`
 
 Open the build output folder. Right-click the project -> "Open Folder in File Explorer," and go to `bin/Debug/net7.0` to find your built project. In this folder should be a file with the named `{ProjectName}.dll`. Copy that to your mod folder.
 
@@ -339,7 +339,7 @@ Below is the full code of the mod at this stage:
 
 `TutorialPluginProvider.cs`:
 
-```cs
+```csharp
 using StudioForge.TotalMiner.API;
 
 namespace TMModTutorial
@@ -372,7 +372,7 @@ namespace TMModTutorial
 
 `TutorialPlugin.cs`:
 
-```cs
+```csharp
 using Microsoft.Xna.Framework.Graphics;
 using StudioForge.BlockWorld;
 using StudioForge.TotalMiner.API;

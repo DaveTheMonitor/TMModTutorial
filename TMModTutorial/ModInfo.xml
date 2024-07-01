@@ -1,0 +1,12 @@
+<ModInfoXML>
+  <ID>DaveTheMonitor.TMModTutorial</ID>
+  <Name>TM Mod Tutorial</Name>
+  <Desc>A basic Total Miner mod example.</Desc>
+  <Author>DaveTheMonitor</Author>
+  <Website>https://github.com/DaveTheMonitor/TMModTutorial</Website>
+  <Version>
+    <Major>1</Major>
+    <Minor>0</Minor>
+    <Patch>0</Patch>
+  </Version>
+</ModInfoXML>

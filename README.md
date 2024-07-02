@@ -481,3 +481,7 @@ Perform actions when the player presses a key or button.
 ## [Saving Data](./SavingData.md)
 
 Save custom data for the world that shouldn't reset when the world is reloaded.
+
+## [Player Data](./PlayerData.md)
+
+Give the player custom data, such as mana for swinging a staff.

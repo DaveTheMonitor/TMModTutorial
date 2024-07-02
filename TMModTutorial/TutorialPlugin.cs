@@ -2,17 +2,21 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StudioForge.BlockWorld;
+using StudioForge.Engine;
 using StudioForge.Engine.Core;
+using StudioForge.Engine.GamerServices;
 using StudioForge.TotalMiner;
 using StudioForge.TotalMiner.API;
 using StudioForge.TotalMiner.Graphics;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace TMModTutorial
 {
     public sealed class TutorialPlugin : ITMPlugin
     {
+        public TutorialPlayerDataManager PlayerData { get; private set; }
         private ITMGame _game;
 
         public void Initialize(ITMPluginManager mgr, ITMMod mod)
@@ -30,8 +34,22 @@ namespace TMModTutorial
             // and set a game field to use later.
 
             _game = game;
+            PlayerData = new TutorialPlayerDataManager(game);
 
+            // Make sure we read our save data before we initialize our
+            // player data!
             ReadData(Path.Combine(game.World.WorldPath, "tutorialdata.dat"));
+
+            // We initialize player data here so data exists for players
+            // after a hot reload, as PlayerJoined isn't called for existing
+            // players on  a hot reload. Without this, hot reloading the mod
+            // will cause a crash.
+            List<ITMPlayer> players = new List<ITMPlayer>();
+            game.GetAllPlayers(players);
+            foreach (ITMPlayer player in players)
+            {
+                PlayerData.AddData(player);
+            }
 
             // This method takes an action. Methods can be implicitly cast
             // to delegates (an action is a delegate without a return value)
@@ -57,11 +75,13 @@ namespace TMModTutorial
         public void PlayerJoined(ITMPlayer player)
         {
             // Called when a player joins the game.
+            PlayerData.AddData(player);
         }
 
         public void PlayerLeft(ITMPlayer player)
         {
             // Called when a player leaves the game.
+            PlayerData.RemoveData(player);
         }
 
         public void WorldSaved(int version)
@@ -85,6 +105,9 @@ namespace TMModTutorial
             // We'll want to increment this whenever we make changes to
             // our save format.
             writer.Write(0);
+
+            // We want to write our save data here.
+            PlayerData.WriteState(writer);
 
             // The file is saved when the writer is disposed, which
             // happens when this method ends because of the using statements.
@@ -115,6 +138,8 @@ namespace TMModTutorial
 
             int tmVersion = reader.ReadInt32();
             int modVersion = reader.ReadInt32();
+
+            PlayerData.ReadState(reader, tmVersion, modVersion);
         }
 
         public void Callback(string data, GlobalPoint3D? p, ITMActor actor, ITMActor contextActor)
@@ -127,6 +152,36 @@ namespace TMModTutorial
         {
             // Called every rendered frame.
             // Draw custom UI or geometry here.
+
+            // CCTV will use GamerID.Sys1, so we only draw the mana
+            // is the ID isn't Sys1 (in other words, only if we're
+            // drawing a real player's HUD)
+            if (virtualPlayer.GamerID != GamerID.Sys1)
+            {
+                DrawMana(player, virtualPlayer, vp);
+            }
+        }
+
+        private void DrawMana(ITMPlayer player, ITMPlayer virtualPlayer, Viewport vp)
+        {
+            int x = CoreGlobals.GraphicsDevice.Viewport.Width - 300;
+            int y = 50;
+            int width = 246;
+            int height = 16;
+            float mana = PlayerData.GetData(virtualPlayer).Mana;
+            SpriteBatchSafe spriteBatch = CoreGlobals.SpriteBatch;
+
+            spriteBatch.Begin();
+            DrawBar(spriteBatch, x, y, width, height, mana, 0, 100, Color.White, Color.Black * 0.5f, new Color(71, 129, 235) * 0.8f);
+            spriteBatch.End();
+        }
+
+        private void DrawBar(SpriteBatchSafe spriteBatch, int x, int y, int width, int height, float current, float min, float max, Color outline, Color back, Color fill)
+        {
+            float progress = (current - min) / (max - min);
+
+            spriteBatch.DrawFilledBox(new Rectangle(x - 2, y - 2, width + 4, height + 4), 2, outline, back);
+            spriteBatch.DrawFilledBox(new Rectangle(x, y, (int)(width * progress), height), 0, fill, fill);
         }
 
         public bool HandleInput(ITMPlayer player)
@@ -180,6 +235,7 @@ namespace TMModTutorial
             // Called for each player every frame.
             // Implement any player-dependent logic that needs to run every
             // frame here.
+            PlayerData.GetData(player).Update();
         }
 
         private void MySwingEvent(Item item, ITMHand hand)
@@ -192,6 +248,22 @@ namespace TMModTutorial
                 // which is out of the scope of this tutorial.
                 return;
             }
+
+            // This item will use 25 mana. If we don't have 25 mana, it
+            // won't do anything. If we do have 25 mana, it'll use 25
+            // mana.
+            TutorialPlayerData data = PlayerData.GetData(player);
+            if (data.Mana < 25)
+            {
+                _game.AddNotification("Not enough mana!");
+                return;
+            }
+
+            data.Mana -= 25;
+
+            // Because our data is a reference type, we don't have to set
+            // the data after changing it. We can get the data, change what
+            // we want, and it'll change on the player.
 
             ITMActor target = player.ActorInReticle;
             if (target == null)

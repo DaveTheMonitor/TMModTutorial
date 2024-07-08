@@ -272,6 +272,7 @@ If you don't already have a folder for your mod, go to your Total Miner's save f
 Next, add a `ModInfo.xml` file to that folder. This will contain information about the mod to display on the menu.
 
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
 <ModInfoXML>
   <ID>TotalBob.TMModTutorial</ID>
   <Name>TM Mod Tutorial</Name>

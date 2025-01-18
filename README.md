@@ -14,7 +14,7 @@ If you don't have an IDE already, download [Visual Studio 2022](https://visualst
 
 **NOTE:** Visual Studio and Visual Studio Code are not the same thing. Visual Studio Code is a general code editor. For mod development, we want Visual Studio, which is a full IDE (integrated development environment).
 
-Next, you'll need the MonoGame project templates to create your project. You can read how to install those [here](https://docs.monogame.net/articles/getting_started/1_setting_up_your_development_environment_windows.html#install-monogame-extension-for-visual-studio-2022)
+Next, you'll need the MonoGame project templates to create your project. You can read how to install those [here](https://docs.monogame.net/articles/getting_started/2_choosing_your_ide_visual_studio.html#install-monogame-extension-for-visual-studio-2022)
 
 ## Creating the Mod Project
 

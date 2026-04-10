@@ -29,3 +29,6 @@ Your feedback is greatly appreciated! If you have any questions or something isn
 - [Player Data](./CustomItems.md)
   - Give the player custom data, such as mana for swinging a staff.
   - Prerequisites: [Saving Data](./SavingData.md)
+- [Lua Functions](./LuaFunctions.md)
+  - Add custom Lua functions that can be used by scripts.
+  - Prerequisites: [Basic Setup](./BasicSetup.md)

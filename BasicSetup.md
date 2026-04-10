@@ -361,3 +361,7 @@ Save custom data for the world that shouldn't reset when the world is reloaded.
 ## [Player Data](./PlayerData.md)
 
 Give the player custom data, such as mana for swinging a staff.
+
+## [Lua Functions](./LuaFunctions.md)
+
+Add custom Lua functions that can be used by scripts.

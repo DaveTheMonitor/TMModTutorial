@@ -1,7 +1,7 @@
 # Saving Data
 
 ## Prerequisites:
-- [Basic Setup](./README.md)
+- [Basic Setup](./BasicSetup.md)
 
 You may want your mod to save some custom data on the world. We currently don't have anything useful to save, but this tutorial serves as a prerequisite to some other tutorials.
 
@@ -31,7 +31,7 @@ In `ITMPlugin.WorldSaved`, we'll open a write stream for the `tutorialdata.dat` 
 
 Then, we'll write our data using a `BinaryWriter`.
 
-**NOTE:** For an actual mod, you would likely want this file to have a different more unique name to guarantee there won't be any conflicts between mods, but for the purposes of this tutorial we're keeping the name simple.
+**NOTE:** For an actual mod, you would likely want this file to have a different more unique name to guarantee there won't be any conflicts between mods, but for the purposes of this tutorial we're keeping the name simple. A good option would be to include all of your save files in a subdirectory with the same name as your mod.
 
 ```csharp
 public void WorldSaved(int version)
@@ -62,14 +62,11 @@ public void WorldSaved(int version)
 }
 ```
 
-**NOTE:** *Do not forget the `using` statements for the stream and BinaryWriter!*
+**NOTE:** *Do not forget the `using` statements for the stream and BinaryWriter! These objects are disposable, and not disposing them will cause problems!*
 
 **NOTE:** We're using `StudioForge.Engine.Core.FileSystem` instead of `System.IO.File` because the world path isn't always a full path. The `FileSystem` methods handle that for us.
 
 Now if you load a world with your mod and save it, you'll see a new file in the mod folder named `tutorialdata.dat` that's 8 bytes large.
-
-For readability, let's move this saving logic to a new method:
-
 
 ## Reading Our Data
 
@@ -125,19 +122,7 @@ Now we'll read our data using a `BinaryReader`. Instead of using `FileSystem.Ope
 ```csharp
 private void ReadData(string file)
 {
-    // We exit if the DateSaved is 0, because that means we're
-    // creating a new world. We otherwise probably won't use this.
-    if (_game.World.Header.DateSaved == 0)
-    {
-        return;
-    }
-
-    // We exit if the file doesn't exist, because that means we're
-    // loading a world that has never been saved with this mod.
-    if (!FileSystem.IsFileExist(file))
-    {
-        return;
-    }
+    // ...
 
     // Opens a read stream for the file.
     using Stream stream = FileSystem.OpenRead(file);
@@ -163,91 +148,8 @@ Now we're ready to start reading and writing custom data that our mod needs. Oth
 
 **NOTE:** Hot reloading the mod will reset all data to the point when it was last saved! If you want to make sure the data doesn't reset, save the world before hot reloading.
 
-Here's the relevant methods we've changed:
+## Full Code
 
-`TutorialPlugin.cs`:
+You can find the code for this stage of the project [here](https://github.com/DaveTheMonitor/TMModTutorial/tree/master/SavingData). Feel free to cross-check your project with this one to ensure you didn't miss anything.
 
-```csharp
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using StudioForge.BlockWorld;
-using StudioForge.Engine.Core;
-using StudioForge.TotalMiner;
-using StudioForge.TotalMiner.API;
-using StudioForge.TotalMiner.Graphics;
-using System;
-using System.IO;
-
-namespace TMModTutorial
-{
-    public sealed class TutorialPlugin : ITMPlugin
-    {
-        private ITMGame _game;
-
-        public void InitializeGame(ITMGame game)
-        {
-            // Called once after all mods are initialized.
-            // Add events to the game here (eg. item swing events)
-            // and set a game field to use later.
-
-            _game = game;
-
-            ReadData(Path.Combine(game.World.WorldPath, "tutorialdata.dat"));
-        }
-
-        public void WorldSaved(int version)
-        {
-            // Called when the world is saved.
-            // Use ITMGame.World.WorldPath to get the world path if you
-            // want to save files.
-
-            // Opens or creates a new file named `tutorialdata.dat` in the
-            // world folder to write data to.
-            string file = Path.Combine(_game.World.WorldPath, "tutorialdata.dat");
-            using FileStream stream = FileSystem.OpenWrite(file);
-
-            // Creates a new BinaryWriter that writes to the stream we opened.
-            using BinaryWriter writer = new BinaryWriter(stream);
-
-            // Globals1.SaveVersion is the current save version for TM.
-            writer.Write(Globals1.SaveVersion);
-
-            // Here we'll write the current save version for our mod.
-            // We'll want to increment this whenever we make changes to
-            // our save format.
-            writer.Write(0);
-
-            // The file is saved when the writer is disposed, which
-            // happens when this method ends because of the using statements.
-            // So there is no need to manually save the file.
-        }
-
-        private void ReadData(string file)
-        {
-            // We exit if the DateSaved is 0, because that means we're
-            // creating a new world. We otherwise probably won't use this.
-            if (_game.World.Header.DateSaved == 0)
-            {
-                return;
-            }
-
-            // We exit if the file doesn't exist, because that means we're
-            // loading a world that has never been saved with this mod.
-            if (!FileSystem.IsFileExist(file))
-            {
-                return;
-            }
-
-            // Opens a read stream for the file.
-            using Stream stream = FileSystem.OpenRead(file);
-
-            // Creates a new BinaryReader to read from the stream we opened.
-            using BinaryReader reader = new BinaryReader(stream);
-
-            int tmVersion = reader.ReadInt32();
-            int modVersion = reader.ReadInt32();
-        }
-    }
-}
-```
+NOTE: If you clone the project, it will not build! This is because the GitHub repository does not include the referenced assemblies, as they contain Total Miner's code and cannot be redistributed. To make the project build, follow the ["Creating the Mod Project" steps 3-4](#creating-the-mod-project) after cloning the project. The added assemblies should automatically be referenced, allowing you to build the project without errors.

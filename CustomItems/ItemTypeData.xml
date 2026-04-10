@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfModItemTypeDataXML>
+    <ModItemTypeDataXML>
+        <ItemID>MyStaff</ItemID>
+        <Type>Weapon</Type>
+        <ClassID>Wood</ClassID>
+        <Inv>Weapon</Inv>
+        <Model>WeaponTLBR</Model>
+        <Swing>Weapon</Swing>
+        <Equip>RightHand</Equip>
+    </ModItemTypeDataXML>
+</ArrayOfModItemTypeDataXML>

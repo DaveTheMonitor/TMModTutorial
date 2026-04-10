@@ -1,7 +1,7 @@
 # Handling Input
 
 ## Prerequisites:
-- [Basic Setup](./README.md)
+- [Basic Setup](./BasicSetup.md)
 
 In your mod, you may want to react to user input. For example, you might want to perform an action when the player presses a button. To do that, we can use the `HandleInput` method.
 
@@ -145,3 +145,9 @@ public bool HandleInput(ITMPlayer player)
 There is another way to handle both keyboard and controller input, and that is through `InputManager1`. This class is also static and defines a few methods we'll want: `IsInputPressed` and `IsInputPressedNew`. These function exactly the same as the previous methods, but take a `PlayerInput` instead of a key or button. A `PlayerInput` is some input action, such as swinging or jumping, and can be rebound in the options menu.
 
 By using this class, we can react to both keyboard and controller using an input, but sometimes it isn't as useful because many of the inputs are already bound to different actions. Since it's otherwise identical to the methods we've already uses, I'll leave that one for you to try.
+
+## Full Code
+
+You can find the code for this stage of the project [here](https://github.com/DaveTheMonitor/TMModTutorial/tree/master/HandlingInput). Feel free to cross-check your project with this one to ensure you didn't miss anything.
+
+NOTE: If you clone the project, it will not build! This is because the GitHub repository does not include the referenced assemblies, as they contain Total Miner's code and cannot be redistributed. To make the project build, follow the ["Creating the Mod Project" steps 3-4](#creating-the-mod-project) after cloning the project. The added assemblies should automatically be referenced, allowing you to build the project without errors.

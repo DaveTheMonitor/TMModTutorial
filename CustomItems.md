@@ -1,7 +1,7 @@
 # Custom Items & C#
 
 ## Prerequisites:
-- [Basic Setup](./README.md)
+- [Basic Setup](./BasicSetup.md)
 
 Custom items are added with XML, but you can use C# to add additional functionality, such as a swing event. However, accessing your custom items with C# isn't as simple as just using the ID. This guide will explain how to access your custom items with C#, and add swing events to them.
 
@@ -67,6 +67,7 @@ It is recommended to expand the atlas horizontally until you reach 32 items, (51
 Because we only have one item right now, we can just use that item's texture. However, when we want to add more than one item, we'll have to add more items to the atlas.
 
 ![32x Staff Texture](Images/Staff32.png)
+
 ![16x Staff Texture](Images/Staff16.png)
 
 ## How do Item IDs work?
@@ -201,7 +202,7 @@ If you did everything right, swinging your custom item should now display a noti
 
 ![Item Swing Notification](Images/ItemSwingNotification.png)
 
-You do anything you want in this event, but for this example we'll just make the staff damage the target and spawn some particles:
+You can do anything you want in this event, but for this example we'll just make the staff damage the target and spawn some particles:
 
 ```csharp
 private void MySwingEvent(Item item, ITMHand hand)
@@ -261,6 +262,8 @@ private void MySwingEvent(Item item, ITMHand hand)
 }
 ```
 
+NOTE: Make sure you use MonoGame's Vector3, not System.Numerics's Vector3! If you use the wrong Vector3, your project will not build with the either the error `'Vector3' is an ambiguous reference between 'Microsoft.Xna.Framework.Vector3' and 'System.Numerics.Vector3'` or `Cannot convert from 'System.Numerics.Vector3' to 'Microsoft.Xna.Framework.Vector3'`. If this happens, remove the using statement for System.Numerics at the top of the file.
+
 ![Staff Swing](Images/StaffSwing.png)
 
 You might notice that if you attack an enemy with this staff when they can't see you, they won't target you. This is because we're just dealing damage to them, not telling them that they're being attacked. To have them target the player when attacked, add this to the swing event immediately after `TakeDamageAndDisplay`:
@@ -269,7 +272,7 @@ You might notice that if you attack an enemy with this staff when they can't see
 TargetingSystem.Target((IActorBehaviour)player, (IActorBehaviour)target);
 ```
 
-This tells the NPC that the player is targeting the NPC that we dealt damage to. This causes the NPC we attack to target the player, as they will now recognize that they're being attacked. Note that we must cast both the NPC and the player to `IActorBehaviour` to call this method.
+This tells the NPC that we just dealt damage to that the player is targeting them. This causes the NPC we attack to target the player, as they will now recognize that they're being attacked. Note that we must cast both the NPC and the player to `IActorBehaviour` to call this method.
 
 ```csharp
 private void MySwingEvent(Item item, ITMHand hand)
@@ -288,130 +291,8 @@ private void MySwingEvent(Item item, ITMHand hand)
 }
 ```
 
-These are the relevant changes we've made to get our custom item working:
+## Full Code
 
-`TutorialItems.cs`:
-```csharp
-using StudioForge.TotalMiner.API;
-using StudioForge.TotalMiner;
+You can find the code for this stage of the project [here](https://github.com/DaveTheMonitor/TMModTutorial/tree/master/BasicSetup). Feel free to cross-check your project with this one to ensure you didn't miss anything.
 
-namespace TMModTutorial
-{
-    public static class TutorialItems
-    {
-        public static Item MyStaff { get; private set; }
-
-        public static void Initialize(EnumTypeOffsets offsets)
-        {
-            // the first item is offsets.ItemID + 0, so we don't have to add anything.
-            MyStaff = (Item)offsets.ItemID;
-
-            // For other items, set them to (Item)offsets.ItemID + index
-            // eg. MySword = (Item)offsets.ItemID + 1;
-        }
-    }
-}
-```
-
-`TutorialPlugin.cs`:
-
-```csharp
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StudioForge.BlockWorld;
-using StudioForge.TotalMiner;
-using StudioForge.TotalMiner.API;
-using StudioForge.TotalMiner.Graphics;
-using System;
-
-namespace TMModTutorial
-{
-    public sealed class TutorialPlugin : ITMPlugin
-    {
-        private ITMGame _game;
-
-        public void Initialize(ITMPluginManager mgr, ITMMod mod)
-        {
-            // Called once, when the mod is loaded.
-            // Load any assets your mods needs (eg. textures) here.
-
-            TutorialItems.Initialize(mgr.Offsets);
-        }
-
-        public void InitializeGame(ITMGame game)
-        {
-            // Called once after all mods are initialized.
-            // Add events to the game here (eg. item swing events)
-            // and set a game field to use later.
-
-            _game = game;
-
-            // This method takes an action. Methods can be implicitly cast
-            // to delegates (an action is a delegate without a return value)
-            // with the same parameters and return value.
-            // MySwingEvent is method we're using for the event.
-            game.AddEventItemSwing(TutorialItems.MyStaff, MySwingEvent);
-        }
-
-        private void MySwingEvent(Item item, ITMHand hand)
-        {
-            if (hand.Owner is not ITMPlayer player)
-            {
-                // ActorInReticle is not available on ITMActor.
-                // If you want the item to work for NPCs, you'll
-                // have to implement the raycast logic yourself,
-                // which is out of the scope of this tutorial.
-                return;
-            }
-
-            ITMActor target = player.ActorInReticle;
-            if (target == null)
-            {
-                // We return if the target is null, meaning
-                // the player isn't targeting anything.
-                return;
-            }
-
-            // We test the distance between the player and the target,
-            // and return if it's greater than the specified distance.
-            // This prevents us from damaging NPCs from across the map.
-            float distance = 10;
-            if (Vector3.Distance(player.Position, target.Position) > distance)
-            {
-                return;
-            }
-
-            // If all of those checks passed, we must have a valid target.
-            // Now we can deal damage and spawn our particles.
-
-            // To deal damage, we'll use the TakeDamageAndDisplay method,
-            // passing the player as the attacker.
-            target.TakeDamageAndDisplay(DamageType.Combat, 20, Vector3.Zero, player, TutorialItems.MyStaff, SkillType.Attack);
-
-            // This ensures that the NPC will target the attacker, even if
-            // they can't see them.
-            TargetingSystem.Target((IActorBehaviour)player, (IActorBehaviour)target);
-
-            // To spawn particles, we'll use the ITMWorld.AddParticle
-            // method, and pass the position of the target + (0, 1, 0)
-
-            // This is the data for the particles we want to spawn.
-            ParticleData particle = new ParticleData()
-            {
-                Size = new Vector4(0.15f, 0.15f, 0.15f, 0),
-                // Duration is measured in milliseconds, not seconds
-                Duration = 1200,
-                StartColor = Color.LightGreen,
-                EndColor = Color.Transparent,
-                VelocityVariance = new Vector3(5, 5, 5)
-            };
-
-            // We use a loop here to spawn multiple particles.
-            for (int i = 0; i < 10; i++)
-            {
-                _game.World.AddParticle(target.Position + new Vector3(0, 1, 0), ref particle);
-            }
-        }
-    }
-}
-```
+NOTE: If you clone the project, it will not build! This is because the GitHub repository does not include the referenced assemblies, as they contain Total Miner's code and cannot be redistributed. To make the project build, follow the ["Creating the Mod Project" steps 3-4](#creating-the-mod-project) after cloning the project. The added assemblies should automatically be referenced, allowing you to build the project without errors.

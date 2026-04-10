@@ -1,13 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34309.116
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11626.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMModTutorial", "TMModTutorial\TMModTutorial.csproj", "{E8ACEB5C-75BD-4F66-826E-09EA523A9F76}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B1B75090-5E72-48C3-90A8-FFA505311E99}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		BasicSetup.md = BasicSetup.md
 		CustomItems.md = CustomItems.md
 		HandlingInput.md = HandlingInput.md
 		PlayerData.md = PlayerData.md
@@ -15,16 +14,42 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SavingData.md = SavingData.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicSetup", "BasicSetup\BasicSetup.csproj", "{AABF6298-6A10-43D2-9016-F4CF9BEA6709}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomItems", "CustomItems\CustomItems.csproj", "{A6EE66AF-D3D7-4C60-B72A-EFFB9AE1BA01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandlingInput", "HandlingInput\HandlingInput.csproj", "{D865A8B2-9DC8-4A99-AB84-802D38DB7A22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavingData", "SavingData\SavingData.csproj", "{405B2D97-730D-4F08-BAF7-5A66DE93A10E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerData", "PlayerData\PlayerData.csproj", "{2726E5D3-B0A7-4222-B598-FE0C5A01FC09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E8ACEB5C-75BD-4F66-826E-09EA523A9F76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8ACEB5C-75BD-4F66-826E-09EA523A9F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8ACEB5C-75BD-4F66-826E-09EA523A9F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8ACEB5C-75BD-4F66-826E-09EA523A9F76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AABF6298-6A10-43D2-9016-F4CF9BEA6709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AABF6298-6A10-43D2-9016-F4CF9BEA6709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AABF6298-6A10-43D2-9016-F4CF9BEA6709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AABF6298-6A10-43D2-9016-F4CF9BEA6709}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6EE66AF-D3D7-4C60-B72A-EFFB9AE1BA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6EE66AF-D3D7-4C60-B72A-EFFB9AE1BA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6EE66AF-D3D7-4C60-B72A-EFFB9AE1BA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6EE66AF-D3D7-4C60-B72A-EFFB9AE1BA01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D865A8B2-9DC8-4A99-AB84-802D38DB7A22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D865A8B2-9DC8-4A99-AB84-802D38DB7A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D865A8B2-9DC8-4A99-AB84-802D38DB7A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D865A8B2-9DC8-4A99-AB84-802D38DB7A22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{405B2D97-730D-4F08-BAF7-5A66DE93A10E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{405B2D97-730D-4F08-BAF7-5A66DE93A10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{405B2D97-730D-4F08-BAF7-5A66DE93A10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{405B2D97-730D-4F08-BAF7-5A66DE93A10E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2726E5D3-B0A7-4222-B598-FE0C5A01FC09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2726E5D3-B0A7-4222-B598-FE0C5A01FC09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2726E5D3-B0A7-4222-B598-FE0C5A01FC09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2726E5D3-B0A7-4222-B598-FE0C5A01FC09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,10 +15,17 @@ Your feedback is greatly appreciated! If you have any questions or something isn
 ## Sections
 
 - [Basic Setup](./BasicSetup.md)
+  - IDE setup and project creation. Start here if you don't have a mod created already.
   - Prerequisites: None
+- [Handling Input](./HandlingInput.md)
+  - Perform actions when the player presses a key or button.
+  - Prerequisites: [Basic Setup](./BasicSetup.md)
 - [Custom Items](./CustomItems.md)
+  - Access your XML-defined items with C# and add events that will be executed when the item is swung.
   - Prerequisites: [Basic Setup](./BasicSetup.md)
 - [Saving Data](./SavingData.md)
+  - Save custom data for the world that shouldn't reset when the world is reloaded.
   - Prerequisites: [Basic Setup](./BasicSetup.md)
 - [Player Data](./CustomItems.md)
+  - Give the player custom data, such as mana for swinging a staff.
   - Prerequisites: [Saving Data](./SavingData.md)

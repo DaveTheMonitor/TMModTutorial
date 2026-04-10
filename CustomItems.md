@@ -295,4 +295,4 @@ private void MySwingEvent(Item item, ITMHand hand)
 
 You can find the code for this stage of the project [here](https://github.com/DaveTheMonitor/TMModTutorial/tree/master/BasicSetup). Feel free to cross-check your project with this one to ensure you didn't miss anything.
 
-NOTE: If you clone the project, it will not build! This is because the GitHub repository does not include the referenced assemblies, as they contain Total Miner's code and cannot be redistributed. To make the project build, follow the ["Creating the Mod Project" steps 3-4](#creating-the-mod-project) after cloning the project. The added assemblies should automatically be referenced, allowing you to build the project without errors.
+NOTE: If you clone the project, it will not build! This is because the GitHub repository does not include the referenced assemblies, as they contain Total Miner's code and cannot be redistributed. To make the project build, follow the ["Creating the Mod Project" steps 3-4](./BasicSetup.md#creating-the-mod-project) after cloning the project. The added assemblies should automatically be referenced, allowing you to build the project without errors.

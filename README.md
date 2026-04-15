@@ -26,7 +26,7 @@ Your feedback is greatly appreciated! If you have any questions or something isn
 - [Saving Data](./SavingData.md)
   - Save custom data for the world that shouldn't reset when the world is reloaded.
   - Prerequisites: [Basic Setup](./BasicSetup.md)
-- [Player Data](./CustomItems.md)
+- [Player Data](./PlayerData.md)
   - Give the player custom data, such as mana for swinging a staff.
   - Prerequisites: [Saving Data](./SavingData.md)
 - [Lua Functions](./LuaFunctions.md)

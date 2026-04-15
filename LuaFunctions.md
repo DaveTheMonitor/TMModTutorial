@@ -7,7 +7,11 @@ Mods can add custom Lua functions that can be used by scripts. There is currentl
 
 ## LuaFuncRegister
 
-Rather than using the C API, Total Miner mods use NLua and a basic helper attribute named `LuaFuncRegister`. First, create a new class to hold your Lua functions. I'd recommend naming it `{ModName}Lua`. We'll name this class `TutorialLua`. This class will contain a constructor that takes an `ITMGame` instance, and an `ITMScriptInstance` instance. It's standard practice to name this script instance `si`. The script instance contains the actor the script is running on along with other useful properties.
+Rather than using the Lua C API, Total Miner mods use NLua and a basic helper attribute named `LuaFuncRegister`. While it is possible to make Lua functions that use the Lua C API, most mods won't need to do this and should instead stick to using the `LuaFuncRegister` attribute unless absolutely necessary. Functions using the Lua C API will not be explained here.
+
+## Custom Lua Functions
+
+First, create a new class to hold your Lua functions. I'd recommend naming it `{ModName}Lua`. We'll name this class `TutorialLua`. This class will contain a constructor that takes an `ITMGame` instance, and an `ITMScriptInstance` instance. It's standard practice to name this script instance `si`. The script instance contains the actor the script is running on along with other useful properties.
 
 One instance of this class will be created for each script instance. The game may create more than one script instance.
 

@@ -62,10 +62,10 @@ public void set_fly_mode(string fly_mode)
     // we'll default to FlyMode.None.
     FlyMode flyMode = fly_mode switch
     {
-        "None" => FlyMode.None,
-        "Slow" => FlyMode.Slow,
-        "Fast" => FlyMode.Fast,
-        "Custom" => FlyMode.Custom,
+        "none" => FlyMode.None,
+        "slow" => FlyMode.Slow,
+        "fast" => FlyMode.Fast,
+        "custom" => FlyMode.Custom,
         _ => FlyMode.None
     };
 
